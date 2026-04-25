@@ -1,0 +1,31 @@
+# --- Python & uv ---
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.uv/
+
+# --- Datos y Notebooks ---
+data/
+*.csv
+*.json
+# Ignorar checkpoints de Jupyter
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# --- Distribución / Build ---
+dist/
+build/
+*.egg-info/
+
+# --- Variables de entorno ---
+.env
+.venv
+env/
+venv/
+
+# --- IDEs ---
+.vscode/
+.idea/
+.DS_Store
