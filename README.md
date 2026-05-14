@@ -11,8 +11,8 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
     - processed: datos procesados.
     - raw: datos crudos. 
 
-- notebooks: enfoque experimentativo
+- notebooks: enfoque experimentativo. 
     - base_model: modelo base usado como benchmark. 
-    - exploratory_data_analysis: obtención de datos crudos y creación de matriz users-items. 
-    - knn_algorithm: algoritmo KNN sobre matriz users-items. 
-    - knn_algorithm_improved: algoritmo KNN con eficiencia mejorada. 
+
+- scripts: funciones y modelos modularizados.
+    - base_model: modelo base usado como benchmark. 
