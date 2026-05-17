@@ -170,12 +170,12 @@ def evaluate_model(test_df: pd.DataFrame, y_pred: np.ndarray, k: int = 10, thres
         f'ndcg@{k}': ndcg
     }
     
-
-test_df = pd.DataFrame({
-    'user_n': [0,0,0, 1,1,1],
-    'rating': [5.0, 1.0, 4.0, 3.0, 5.0, 2.0],
-    'pred':   [4.8, 1.2, 4.5, 2.9, 4.7, 2.1]
-})
-# Mete pred dentro del dataframe y prueba evaluate_model
-res = evaluate_model(test_df[['user_n','rating']], test_df['pred'].values, k=2, threshold=4.0)
-print(res)
+if __name__ == "__main__":
+    test_df = pd.DataFrame({
+        'user_n': [0,0,0, 1,1,1],
+        'rating': [5.0, 1.0, 4.0, 3.0, 5.0, 2.0],
+        'pred':   [4.8, 1.2, 4.5, 2.9, 4.7, 2.1]
+    })
+    # Mete pred dentro del dataframe y prueba evaluate_model
+    res = evaluate_model(test_df[['user_n','rating']], test_df['pred'].values, k=2, threshold=4.0)
+    print(res)
