@@ -23,6 +23,8 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
     - bernoulli_matrix_factorization: modelo de Matrix Factorization de Bernoulli. 
     - neural_collaborative_filtering: modelo de NCF. 
 
+    - analysis: análisis del funcionamiento en métricas de los respectivos modelos. 
+
 - scripts: funciones y modelos modularizados a partir de los notebooks.
 
     - user_items_matrix.
@@ -54,3 +56,5 @@ Se recomienda ejecutar el proyecto del siguiente modo y en el siguiente orden, p
 5) Modelo BMF (primero explicación en notebooks y luego ejecutar en src). 
 
 6) Modelo NCF (primero explicación en notebooks y luego ejecutar en src). 
+
+7) Análisis de modelos a partir de las métricas. 
