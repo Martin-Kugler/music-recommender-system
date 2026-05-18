@@ -39,11 +39,10 @@ class KNN_model():
         test_df['pred'] = 0.0
         for user_id in test_df['user_n'].unique():
             preds_all = user_prediction(user_id, self.train_set, k=self.k)
-
+            mask = test_df['user_n'] == user_id
             track_ids = test_df.loc[mask, 'track_n'].values
             user_preds = preds_all[track_ids]
             user_preds[np.isinf(user_preds)] = 0.0
-
             test_df.loc[mask, 'pred'] = user_preds
 
         return evaluate_model(test_df, test_df['pred'].values)
