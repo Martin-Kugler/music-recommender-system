@@ -53,11 +53,14 @@ class KNN_model():
             all_norms=self._all_norms,
         )
     
-    def evaluate(self):
+    def evaluate(self, max_users=None):
         ''' 
         Evalúa el modelo usando el conjunto de test y la función predefinida en metrics.py.
         '''
-        return self.evaluate_subset(max_users=self.eval_max_users, random_state=42)
+        if max_users is None: 
+            return self.evaluate_subset(max_users=self.eval_max_users, random_state=42)
+        else: 
+            return self.evaluate_subset(max_users, random_state=42)
 
     def evaluate_subset(self, max_users: int | None = 500, random_state: int = 42):
         '''
@@ -148,8 +151,9 @@ if __name__ == '__main__':
 
         if option == 'E': 
             print('Evaluando modelo...')
+            max_users = int(input('Introduzca el número del subconjunto usuarios que se desea evaluar (unos 200 para rapidez pero poca precisión, unos 2000 para precisión con rapidez media, mayor que 2000 para precisión con lentitud (aproximadamente) y None para el valor predeterminado): '))
             print('Evaluación aproximada (subset de usuarios)')
-            print(knn_model.evaluate())
+            print(knn_model.evaluate(max_users))
         
         elif option == 'R': 
             user_id = int(input('Introduzca el índice de un usuario para recomendarle canciones: '))
