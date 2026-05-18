@@ -19,7 +19,7 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
     - baseline_model: modelo base usado como benchmark. 
 
     - knn: modelo K-Nearest Neighbours. 
-    - matrix_factorization: modelo de Matrix Factorization. 
+    - probabilistic_matrix_factorization: modelo de Matrix Factorization. 
     - bernoulli_matrix_factorization: modelo de Matrix Factorization de Bernoulli. 
     - neural_collaborative_filtering: modelo de NCF. 
 
@@ -35,7 +35,7 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
     - knn_functions_optimized: versión optimizada de funciones de KNN modificado con IA. 
     - knn_model_optimized: versión optimizada del modelo K-Nearest Neighbours en formato de clase modificado con IA. 
 
-    - matrix_factorization.
+    - probabilistic_matrix_factorization.
     - bernoulli_matrix_factorization.
     - neural_collaborative_filtering. 
 
@@ -51,7 +51,7 @@ Se recomienda ejecutar el proyecto del siguiente modo y en el siguiente orden, p
 
 3) Modelo KNN (primero explicación en notebooks y luego ejecutar en src con knn_model_optimized.py (versión optimizada)). 
 
-4) Modelo MF (primero explicación en notebooks y luego ejecutar en src). 
+4) Modelo PMF (primero explicación en notebooks y luego ejecutar en src). 
 
 5) Modelo BMF (primero explicación en notebooks y luego ejecutar en src). 
 
