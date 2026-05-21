@@ -25,7 +25,7 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
 
     - analysis: análisis del funcionamiento en métricas de los respectivos modelos. 
 
-- scripts: funciones y modelos modularizados a partir de los notebooks.
+- src: funciones y modelos modularizados a partir de los notebooks.
 
     - user_items_matrix.
     - baseline_model.
@@ -40,6 +40,8 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
     - neural_collaborative_filtering. 
 
     - metrics: script donde se guardan las principales funciones de métricas para analizar el funcionamiento de nuestros modelos. 
+
+- reports: gráficas, infografía e informe. 
 
 ## Ejecución del proyecto: 
 
@@ -58,3 +60,5 @@ Se recomienda ejecutar el proyecto del siguiente modo y en el siguiente orden, p
 6) Modelo NCF (primero explicación en notebooks y luego ejecutar en src). 
 
 7) Análisis de modelos a partir de las métricas. 
+
+8) Lectura del informe técnico en reports. 
