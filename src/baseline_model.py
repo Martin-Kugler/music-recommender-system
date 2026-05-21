@@ -30,33 +30,23 @@ class BaselineModel:
         """
         return self.item_means.get(item_id, self.global_mean)
     
-    def evaluate(self, test_set, item_col='track_n', k=10, threshold=4.0):
+    def evaluate(self, test_df, max_users, item_col='track_n', user_col='user_n', k=10, threshold=4.0):
         """
         Evalúa el modelo base generando predicciones vectorizadas y llamando 
-        a la función externa evaluate_model. Soporta tanto DataFrames como matrices CSR.
+        a la función externa evaluate_model, solo sobre un subconjunto específico de usuarios.
         """
         from metrics import evaluate_model
         
-        # 1) Control de formato: convertimos matriz CSR a DataFrame si es necesario
-        if not isinstance(test_set, pd.DataFrame):
-            import scipy.sparse as sp
-            if sp.issparse(test_set):
-                coo = test_set.tocoo()
-                test_df = pd.DataFrame({
-                    'user_n': coo.row,
-                    'track_n': coo.col,
-                    'rating': coo.data
-                })
-            else:
-                raise ValueError("test_set debe ser un DataFrame o una matriz esparsa de SciPy.")
-        else:
-            test_df = test_set.copy()
+        # 1) Filtrar el test_df para trabajar solo con los usuarios del subconjunto: 
+        selected_users = test_df[user_col].unique()[:max_users]
+        subset_df = test_df[test_df[user_col].isin(selected_users)].copy()
+        
+        if subset_df.empty:
+            print("El subconjunto de usuarios no tiene interacciones en el set de test.")
+            return None
 
-        # 2) Generación vectorizada de predicciones
-        # .map() busca cada track_n en el diccionario de medias. 
-        # Si un track no existe (cold start), devuelve NaN. 
-        # .fillna() reemplaza esos NaNs por la media global automáticamente.
-        y_pred = test_df[item_col].map(self.item_means).fillna(self.global_mean).values
+        # 2) Generación vectorizada de predicciones sobre el subconjunto filtrado: 
+        y_pred = subset_df[item_col].map(self.item_means).fillna(self.global_mean).values
 
-        # 3) Llamada a la función de métricas externa:
-        return evaluate_model(test_df, y_pred, k=k, threshold=threshold)
+        # 3) Llamada a la función de métricas externa con el subconjunto: 
+        return evaluate_model(subset_df, y_pred, k=k, threshold=threshold)
