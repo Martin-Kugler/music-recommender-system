@@ -6,7 +6,7 @@ Decisiones del equipo:
 - K para top-K: 10 (configurable)
 - Usuarios sin relevantes en test: se saltan
 - Precision@K: hits/K (no se ajusta K)
-- Evaluación sobre items en test del usuario (no catálogo completo)
+- Evaluación estricta (con Negative Sampling implementado en el pipeline exterior)
 """
 
 import numpy as np
@@ -74,17 +74,22 @@ def precision_recall_at_k(test_df: pd.DataFrame, k: int = 10, threshold: float =
     """
     precisiones, recalls = [], []
     for user, grupo in test_df.groupby('user_n'):
-        top_k = grupo.nlargest(k, 'pred')
-        hits = (top_k['rating'] >= threshold).sum()
+        # Verificamos si el usuario tiene items relevantes para no penalizar artificialmente
         total_rel = (grupo['rating'] >= threshold).sum()
         
         if total_rel == 0:
             continue
             
+        top_k = grupo.nlargest(k, 'pred')
+        hits = (top_k['rating'] >= threshold).sum()
+        
         precisiones.append(hits / k)
         recalls.append(hits / total_rel)
         
-    return np.mean(precisiones), np.mean(recalls)
+    if not precisiones:
+        return 0.0, 0.0
+        
+    return float(np.mean(precisiones)), float(np.mean(recalls))
 
 
 def f1_at_k(precision: float, recall: float) -> float:
@@ -105,7 +110,7 @@ def f1_at_k(precision: float, recall: float) -> float:
     return 2 * precision * recall / (precision + recall)
 
 
-def ndcg_at_k(test_df: pd.DataFrame, k: int = 10) -> float:
+def ndcg_at_k(test_df: pd.DataFrame, k: int = 10, threshold: float = 4.0) -> float:
     """
     Calcula la Ganancia Acumulada Descontada Normalizada (NDCG@K) promediada por usuario.
     A diferencia de la Precision, el NDCG asume que el orden de las recomendaciones 
@@ -115,28 +120,41 @@ def ndcg_at_k(test_df: pd.DataFrame, k: int = 10) -> float:
     Args:
         test_df (pd.DataFrame): DataFrame con las columnas 'user_n', 'rating', y 'pred'.
         k (int, optional): Longitud de la lista de recomendaciones. Por defecto es 10.
+        threshold (float, optional): Calificacion minima para considerar un item 
+            como "relevante". Por defecto es 4.0.
 
     Returns:
         float: El valor medio de NDCG@K.
     """
     ndcgs = []
     for user, group in test_df.groupby('user_n'):
+        total_rel = (group['rating'] >= threshold).sum()
+        if total_rel == 0:
+            continue
+            
+        # Relevancia binaria para evitar que items basura sumen puntos al NDCG
+        group = group.copy()
+        group['relevance'] = (group['rating'] >= threshold).astype(int)
+
         top_k = group.nlargest(k, 'pred')
-        gains = (2 ** top_k['rating'].values - 1)
+        gains = (2 ** top_k['relevance'].values - 1)
         discounts = np.log2(np.arange(2, len(gains) + 2))
         dcg = np.sum(gains / discounts)
 
-        ideal = group.nlargest(k, 'rating')
-        ideal_gains = (2 ** ideal['rating'].values - 1)
+        ideal = group.nlargest(k, 'relevance')
+        ideal_gains = (2 ** ideal['relevance'].values - 1)
         ideal_discounts = np.log2(np.arange(2, len(ideal_gains) + 2))
         idcg = np.sum(ideal_gains / ideal_discounts)
         
-        if idcg == 0:
-            continue
+        if idcg > 0:
+            ndcgs.append(dcg / idcg)
+        else:
+            ndcgs.append(0.0)
             
-        ndcgs.append(dcg / idcg)
+    if not ndcgs:
+        return 0.0
         
-    return np.mean(ndcgs)
+    return float(np.mean(ndcgs))
 
 
 def evaluate_model(test_df: pd.DataFrame, y_pred: np.ndarray, k: int = 10, threshold: float = 4.0) -> dict:
@@ -159,7 +177,7 @@ def evaluate_model(test_df: pd.DataFrame, y_pred: np.ndarray, k: int = 10, thres
     rmse = metrica_rmse(y_pred, df['rating'].values)
     precision, recall = precision_recall_at_k(df, k, threshold)
     f1 = f1_at_k(precision, recall)
-    ndcg = ndcg_at_k(df, k)
+    ndcg = ndcg_at_k(df, k, threshold)
     
     return {
         'mae': mae,
@@ -169,13 +187,3 @@ def evaluate_model(test_df: pd.DataFrame, y_pred: np.ndarray, k: int = 10, thres
         f'f1@{k}': f1,
         f'ndcg@{k}': ndcg
     }
-    
-if __name__ == "__main__":
-    test_df = pd.DataFrame({
-        'user_n': [0,0,0, 1,1,1],
-        'rating': [5.0, 1.0, 4.0, 3.0, 5.0, 2.0],
-        'pred':   [4.8, 1.2, 4.5, 2.9, 4.7, 2.1]
-    })
-    # Mete pred dentro del dataframe y prueba evaluate_model
-    res = evaluate_model(test_df[['user_n','rating']], test_df['pred'].values, k=2, threshold=4.0)
-    print(res)
