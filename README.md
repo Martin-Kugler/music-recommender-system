@@ -9,7 +9,7 @@ https://www.kaggle.com/datasets/undefinenull/million-song-dataset-spotify-lastfm
 
 - data
 
-    - processed: datos procesados.
+    - processed: datos procesados, datos de los hiperparámetros de los modelos y resultados finales de los modelos.
     - raw: datos crudos. 
 
 - notebooks: enfoque experimentativo y explicativo (recomendable para entender el proceso subyacente). 
