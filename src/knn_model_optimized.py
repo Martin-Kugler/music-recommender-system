@@ -84,7 +84,7 @@ class KNN_model():
             
         test_df = test_df.copy()
 
-        # Submuestreo por usuario (acelera muchísimo cuando el test es enorme)
+        # Submuestreo por usuario:
         if max_users is not None:
             unique_users = test_df['user_n'].unique()
             if unique_users.size > max_users:
